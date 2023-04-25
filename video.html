@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+    <style>
+        #out{
+            text-align: center;
+        }
+        #botones{
+            text-align: center;
+        }
+        button{
+            background-color: gray;
+            color: white;
+        }
+    </style>
+
+    <head>
+        <meta charset="utf-8">
+        <script>
+
+            if (window.File && window.FileReader && window.FileList) { console.log('Todas las APIs soportadas');
+            } else {
+            alert('La API de FILE no es soportada en este navegador.');
+            }
+
+            function mostarBotones (){
+                document.getElementById("botones").hidden = false;
+            }
+            
+            function handleFileSelect(evt) {
+                var f = evt.target.files[0];
+                if (!f.type.match('video.*')) { 
+                    console.log("No es un video");
+                    return
+                }
+                var reader = new FileReader();
+
+                reader.onload = (function (theFile){
+                    return function (e) {
+                        var div = document.createElement('div');
+                        div.innerHTML = ['<video id="video" controls autoplay loop src="',e.target.result,'" title="', escape(theFile.name),'"></video>'].join('');
+                        document.getElementById('out').insertBefore(div, null);
+                        alert("Video cargando");
+                        mostarBotones();
+                    };
+                })(f);
+                reader.readAsDataURL(f);
+            }
+                try {
+                   document.getElementById('file').addEventListener('change',handleFileSelect, false); 
+                } catch (error) {
+                    console.log("No hay video cargado")
+                }
+                
+
+        </script>
+    </head>
+    <body>
+        <h3>Carga de ficheros</h3>
+
+        <input type="file" id="file" name="files[]" onchange="handleFileSelect(event)" />
+        <p></p>
+        <output id="out"></output>
+
+        <div id="botones" hidden>
+            <button onclick="document.getElementById('video').play()">Reproducir</button> 
+            <button onclick="document.getElementById('video').pause()">Pausa</button> 
+            <button onclick="try{document.getElementById('video').volume +=0.1} catch(error) {console.log('No se puede subir más el volumen')} ">Subir Volumen</button>
+            <button onclick="try{document.getElementById('video').volume -=0.1} catch(error) {console.log('No se puede bajar más el volumen')} ">Bajar Volumen</button>
+        </div>
+        
+
+    </body>
+</html>
